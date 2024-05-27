@@ -296,36 +296,6 @@ impl<'a, T: ComponentId> Component<'a, T> {
     }
 }
 
-#[cfg(feature = "flecs_meta")]
-impl<'a, T: ComponentId> Component<'a, T> {
-    // todo!("Check if this is correctly ported")
-    /// # See also
-    ///
-    /// * C++ API: `component::opque`
-    #[doc(alias = "component::opque")]
-    pub fn opaque<OpaqueType>(&mut self) -> &mut Self
-    where
-        OpaqueType: ComponentId,
-    {
-        let mut ts = Opaque::<OpaqueType>::new(self.world);
-        ts.desc.entity = T::get_id(self.world);
-        unsafe { sys::ecs_opaque_init(self.world.world_ptr_mut(), &ts.desc) };
-        self
-    }
-
-    /// # See also
-    ///
-    /// * C++ API: `component::opaque`
-    #[doc(alias = "component::opaque")]
-    pub fn opaque_id(&mut self, as_type: impl Into<Entity>) -> Opaque<'a, T> {
-        let mut opaque = Opaque::<T>::new(self.world);
-        opaque.as_type(as_type.into());
-        opaque
-    }
-
-    //todo!("untyped component constant function")
-}
-
 mod eq_operations {
     use super::*;
 
