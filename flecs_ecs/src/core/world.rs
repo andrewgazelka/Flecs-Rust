@@ -79,6 +79,7 @@ impl World {
     }
 
     fn init_builtin_components(&self) {
+        // used for event handling with no data
         self.component::<()>();
 
         //TODO Poly + identifier?
@@ -2986,7 +2987,7 @@ impl World {
 }
 /// Id mixin implementation
 impl World {
-    /// Get  id of component / pair
+    /// Get the id view of component / pair
     ///
     /// # Type Parameters
     ///
