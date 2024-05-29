@@ -9,7 +9,7 @@ use flecs_ecs::sys;
 /// Assemblies/Templates created by the script rely upon resources in the script object,
 /// and for that reason keep the script alive until all assemblies created by the script are deleted.
 #[derive(flecs_ecs_derive::Component)]
-struct Script<'a> {
+pub struct Script<'a> {
     script: *mut sys::ecs_script_t,
     ast: *mut i8,
     _phantom: std::marker::PhantomData<&'a ()>,
@@ -273,5 +273,37 @@ impl<'a> Script<'a> {
                 code.as_ptr() as *const i8,
             ) == 0
         }
+    }
+
+    /// Convert value to string
+    ///     
+    /// # See also
+    ///
+    /// * C API: `ecs_ptr_to_expr`
+    /// * C++ API: `world::to_expr`
+    pub fn to_expr_id(
+        world: impl IntoWorld<'a>,
+        id_of_value: impl Into<Entity>,
+        value: *const std::ffi::c_void,
+    ) -> String {
+        let id = *id_of_value.into();
+        let world = world.world_ptr_mut();
+        let expr = unsafe { sys::ecs_ptr_to_expr(world, id, value) };
+        let c_str = unsafe { CStr::from_ptr(expr) };
+        let str = c_str.to_str().unwrap().to_owned();
+        unsafe { sys::ecs_os_api.free_.expect("os api is missing")(expr as *mut std::ffi::c_void) };
+        str
+    }
+
+    /// Convert value to string
+    ///
+    /// # See also
+    ///
+    /// * C API: `ecs_ptr_to_expr`
+    /// * C++ API: `world::to_expr`
+    pub fn to_expr<T: ComponentId>(world: impl IntoWorld<'a>, value: &T) -> String {
+        let world2 = world.world();
+        let id = T::get_id(world);
+        Self::to_expr_id(world2, id, value as *const T as *const std::ffi::c_void)
     }
 }
