@@ -16,4 +16,8 @@ pub mod system;
 #[cfg(feature = "flecs_pipeline")]
 pub mod pipeline;
 
+#[cfg(feature = "flecs_script")]
 pub mod experimental;
+
+#[cfg(feature = "flecs_json")]
+pub mod json;

@@ -10,7 +10,7 @@ pub(crate) enum IterType {
 }
 
 pub struct Iter<'a, const IS_RUN: bool = true, P = ()> {
-    iter: &'a mut IterT,
+    pub(crate) iter: &'a mut IterT,
     marker: PhantomData<P>,
 }
 
