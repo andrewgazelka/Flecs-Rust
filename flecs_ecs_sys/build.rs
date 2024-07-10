@@ -197,6 +197,7 @@ fn main() {
 
         build
             .file("src/flecs.c")
+            .flag("-flto")
             .warnings(true)
             .extra_warnings(true)
             .define("FLECS_CUSTOM_BUILD", None)
@@ -300,5 +301,7 @@ fn main() {
 
         #[cfg(feature = "regenerate_binding")]
         generate_bindings();
+
+        println!("cargo:rustc-link-arg=-Clink-arg=-fuse-ld=lld");
     }
 }
