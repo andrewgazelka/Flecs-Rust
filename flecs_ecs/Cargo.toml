@@ -229,6 +229,16 @@ doc-scrape-examples = true
 # solves criterion problem for using baseline
 [lib]
 bench = false
+# One shared instance per process, for any consumer that loads code at runtime.
+#
+# This crate owns flecs's C globals and the process-global pool that hands out a
+# component type's index into a world's component array. A second static copy is
+# a second pool, so a host and a dynamically loaded module index one world two
+# different ways -- consistently on each side, so nothing raises an error.
+#
+# `rlib` stays first-class: a consumer that links only this crate, statically,
+# is unaffected and pays nothing for the dylib existing.
+crate-type = ["dylib", "rlib"]
 
 [[bench]]
 name = "main"
